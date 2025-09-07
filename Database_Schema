@@ -1,0 +1,40 @@
+/*
+	 check for the datawarehose database is avilable or not.
+	 if avilable drop the database and recreate the databse
+*/
+
+use master;
+
+if EXISTS ( select * from sys.databases where name='datawarehouse')
+Begin
+	print('---------------------------------')
+	print('>> drop database:datawarehouse')
+	print('---------------------------------')
+	
+	drop database datawarehouse;
+End;
+
+	print('---------------------------------')
+	print('>> create database:datawarehouse')
+	print('---------------------------------')
+
+create database datawarehouse;
+go
+
+use datawarehouse;
+go
+
+/*
+	create the schema(bronze,silver,gold)
+*/
+
+create schema bronze;
+go
+
+create schema silver;
+go
+
+create schema gold
+go
+
+
