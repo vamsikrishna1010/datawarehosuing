@@ -1,8 +1,14 @@
-/*
-	create table for CRM & ERP dataset and 
-*/
+USE [datawarehouse]
+GO
 
-create procedure sp_bronze_tables
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE or Alter  procedure [dbo].[sp_bronze_tables]
 as
 begin
 
@@ -44,9 +50,10 @@ begin
 		drop table bronze.crm_sales_details
 	end
 	create table bronze.crm_sales_details(
-		sls_ord_num int,
+		sls_ord_num nvarchar(50),
 		sls_prd_key nvarchar(50),
-		sls_cust_id nvarchar(50),
+		sls_cust_id int,
+	    sls_order_dt INT,
 		sls_ship_dt int,
 		sls_due_dt int,
 		sls_sales int,
@@ -60,7 +67,7 @@ begin
 		drop table bronze.erp_cust_az12
 	end
 	create table bronze.erp_cust_az12(
-		CID int,
+		CID nvarchar(50),
 		BDATE date,
 		GEN nvarchar(50),
 	)
@@ -80,7 +87,7 @@ begin
 	if  exists(select * from
 		INFORMATION_SCHEMA.TABLES where TABLE_NAME='erp_px_cat_g1v2' and TABLE_SCHEMA='bronze')
 	begin
-		drop table erp_px_cat_g1v2
+		drop table bronze.erp_px_cat_g1v2
 	end
 	create table bronze.erp_px_cat_g1v2(
 		ID nvarchar(50),
@@ -91,4 +98,4 @@ begin
 
 end
 
-exec sp_bronze_tables
+GO
