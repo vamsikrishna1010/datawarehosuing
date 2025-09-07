@@ -1,0 +1,94 @@
+/*
+	create table for CRM & ERP dataset and 
+*/
+
+create procedure sp_bronze_tables
+as
+begin
+
+	if exists(select * from
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME='crm_cust_info' and TABLE_SCHEMA='bronze')
+	begin
+		drop table bronze.crm_cust_info
+	end
+	create table bronze.crm_cust_info(
+		cst_id int,
+		cst_key nvarchar(50),
+		cst_firstname nvarchar(50),
+		cst_lastname nvarchar(50),
+		cst_marital_status nvarchar(50),
+		cst_gndr nvarchar(50),
+		cst_create_date date
+	);
+
+
+	if exists(select * from
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME='crm_prd_info' and TABLE_SCHEMA='bronze')
+	begin
+		drop table bronze.crm_prd_info
+	end
+
+	create table bronze.crm_prd_info(
+		prd_id int,
+		prd_key nvarchar(50),
+		prd_nm nvarchar(50),
+		prd_cost int,
+		prd_line nvarchar(50),
+		prd_start_dt date,
+		prd_end_dt date
+	);
+
+	if  exists(select * from
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME='crm_sales_details' and TABLE_SCHEMA='bronze')
+	begin
+		drop table bronze.crm_sales_details
+	end
+	create table bronze.crm_sales_details(
+		sls_ord_num int,
+		sls_prd_key nvarchar(50),
+		sls_cust_id nvarchar(50),
+		sls_ship_dt int,
+		sls_due_dt int,
+		sls_sales int,
+		sls_quantity int,
+		sls_price int
+	);
+
+	if exists(select * from
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME='erp_cust_az12' and TABLE_SCHEMA='bronze')
+	begin
+		drop table bronze.erp_cust_az12
+	end
+	create table bronze.erp_cust_az12(
+		CID int,
+		BDATE date,
+		GEN nvarchar(50),
+	)
+	
+
+	if  exists(select * from
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME='erp_loc_a101' and TABLE_SCHEMA='bronze')
+	begin
+		drop table bronze.erp_loc_a101
+	end
+	create table bronze.erp_loc_a101(
+		CID nvarchar(50),
+		CNTRY nvarchar(50),
+	);
+	
+
+	if  exists(select * from
+		INFORMATION_SCHEMA.TABLES where TABLE_NAME='erp_px_cat_g1v2' and TABLE_SCHEMA='bronze')
+	begin
+		drop table erp_px_cat_g1v2
+	end
+	create table bronze.erp_px_cat_g1v2(
+		ID nvarchar(50),
+		CAT nvarchar(50),
+		SUBCAT nvarchar(50),
+		MAINTENANCE nvarchar(50),
+	)
+
+end
+
+exec sp_bronze_tables
