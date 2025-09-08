@@ -1,0 +1,144 @@
+USE [datawarehouse]
+GO
+
+/****** Object:  StoredProcedure [bronze].[load_bronze]    Script Date: 08-09-2025 14:27:31 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE    procedure [bronze].[load_bronze] as
+begin Try
+	declare @start_time Datetime;
+	declare @end_time Datetime;
+	declare @batch_start_time Datetime;
+	declare @batch_end_time Datetime;
+
+	set @batch_start_time= GETDATE()
+
+	print('===============================')
+	print('Bulk Load CRM Tables')
+	print('===============================')
+
+	print('>> Truncate table:[bronze].[crm_cust_info]')
+	Truncate table [bronze].[crm_cust_info]
+
+	set @start_time=GETDATE();
+	print('>> Insert table:[bronze].[crm_cust_info]')
+	bulk insert [bronze].[crm_cust_info]
+	from 'C:\\Users\\anilk\\Downloads\\sql-data-warehouse-project\\sql-data-warehouse-project\\datasets\\source_crm\\cust_info.csv'
+	with(
+		FIRSTROW=2,
+		FIELDTERMINATOR=',',
+		TABLOCK
+		)
+	SET @end_time = GETDATE();
+	PRINT '>> Load Duration: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+	PRINT '>> -------------';
+
+	set @start_time=GETDATE();
+	print('>> Truncate table:[bronze].[crm_prd_info]')
+	Truncate table [bronze].[crm_prd_info]
+
+	print('>> Insert table:[bronze].[crm_prd_info] ')
+	bulk insert [bronze].[crm_prd_info]
+	from 'C:\\Users\\anilk\\Downloads\\sql-data-warehouse-project\\sql-data-warehouse-project\\datasets\\source_crm\\prd_info.csv'
+	with(
+		FIRSTROW=2,
+		FIELDTERMINATOR=',',
+		TABLOCK
+		)
+	SET @end_time = GETDATE();
+	PRINT '>> Load Duration: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+	PRINT '>> -------------';
+
+	set @start_time=GETDATE();
+	print('>> Truncat table: [bronze].[crm_sales_details]')
+	Truncate table [bronze].[crm_sales_details];
+
+	print('>> Insert table: [bronze].[crm_sales_details]')
+	bulk insert [bronze].[crm_sales_details]
+	from 'C:\\Users\\anilk\\Downloads\\sql-data-warehouse-project\\sql-data-warehouse-project\\datasets\\source_crm\\sales_details.csv'
+	with(
+		FIRSTROW=2,
+		FIELDTERMINATOR=',',
+		TABLOCK
+		)
+	SET @end_time = GETDATE();
+	PRINT '>> Load Duration: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+	PRINT '>> -------------';
+
+	print('===============================')
+	print('Bulk Load ERP Tables')
+	print('===============================')
+
+	set @start_time=GETDATE();
+	print('>> Truncate table: [bronze].[erp_cust_az12] ')
+	Truncate table [bronze].[erp_cust_az12];
+
+	print('>> Insert Table: [bronze].[erp_cust_az12]')
+	bulk insert [bronze].[erp_cust_az12]
+	from 'C:\\Users\\anilk\\Downloads\\sql-data-warehouse-project\\sql-data-warehouse-project\\datasets\\source_erp\\CUST_AZ12.csv'
+	with(
+		FIRSTROW=2,
+		FIELDTERMINATOR=',',
+		TABLOCK
+		)
+
+	SET @end_time = GETDATE();
+	PRINT '>> Load Duration: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+	PRINT '>> -------------';
+
+	set @start_time=GETDATE();
+	print('>> Truncate table:[bronze].[erp_cust_az12] ')
+	Truncate table [bronze].[erp_cust_az12];
+
+	print('>> Insert table: [bronze].[erp_cust_az12]')
+	bulk insert [bronze].[erp_loc_a101]
+	from 'C:\\Users\\anilk\\Downloads\\sql-data-warehouse-project\\sql-data-warehouse-project\\datasets\\source_erp\\LOC_A101.csv'
+	with(
+		FIRSTROW=2,
+		FIELDTERMINATOR=',',
+		TABLOCK
+		)
+	SET @end_time = GETDATE();
+	PRINT '>> Load Duration: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+	PRINT '>> -------------';
+
+	set @start_time=GETDATE();
+	print('>> Truncate table [bronze].[erp_px_cat_g1v2]')
+	Truncate table [bronze].[erp_px_cat_g1v2];
+
+	print('>> Insert table: [bronze].[erp_px_cat_g1v2]')
+	bulk insert [bronze].[erp_px_cat_g1v2]
+	from 'C:\\Users\\anilk\\Downloads\\sql-data-warehouse-project\\sql-data-warehouse-project\\datasets\\source_erp\\PX_CAT_G1V2.csv'
+	with(
+		FIRSTROW=2,
+		FIELDTERMINATOR=',',
+		TABLOCK
+		)
+
+	SET @end_time = GETDATE();
+	PRINT '>> Load Duration: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+	PRINT '>> -------------';
+
+	SET @batch_end_time = GETDATE();
+	PRINT '=========================================='
+	PRINT 'Loading Bronze Layer is Completed';
+       PRINT '   - Total Load Duration: ' + CAST(DATEDIFF(SECOND, @batch_start_time, @batch_end_time) AS NVARCHAR) + ' seconds';
+	PRINT '=========================================='
+
+end try
+begin catch
+		PRINT '=========================================='
+		PRINT 'ERROR OCCURED DURING LOADING BRONZE LAYER'
+		PRINT 'Error Message' + ERROR_MESSAGE();
+		PRINT 'Error Message' + CAST (ERROR_NUMBER() AS NVARCHAR);
+		PRINT 'Error Message' + CAST (ERROR_STATE() AS NVARCHAR);
+		PRINT '=========================================='
+end catch
+GO
+
+
